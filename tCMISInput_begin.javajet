@@ -1,0 +1,41 @@
+<%@ jet
+        imports="
+		org.talend.core.model.process.INode 
+		org.talend.core.model.process.ElementParameterParser 
+		org.talend.core.model.metadata.IMetadataTable 
+		org.talend.core.model.metadata.IMetadataColumn 
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.core.model.metadata.types.JavaTypesManager
+		org.talend.core.model.metadata.types.JavaType
+		java.util.List 
+    	java.util.Map		
+	"
+        %>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode) codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+    String CMIS_SERVER_URL = ElementParameterParser.getValue(node, "__CMIS_SERVER_URL__");
+    String REPOSITORY_ID = ElementParameterParser.getValue(node, "__REPOSITORY_ID__");
+    String USER_NAME = ElementParameterParser.getValue(node, "__USER_NAME__");
+    String PASSWORD = ElementParameterParser.getValue(node, "__PASSWORD__");
+    String QUERY = ElementParameterParser.getValue(node, "__QUERY__");
+
+%>
+
+int nb_line_<%=cid%> = 0;
+com.sourcesense.talend.cmis.OpenCMISHelper cmisHelper_<%=cid %> = new com.sourcesense.talend.cmis.OpenCMISHelper(<%=CMIS_SERVER_URL %>, <%=REPOSITORY_ID %>, <%=USER_NAME %>, <%=PASSWORD %>);
+org.apache.chemistry.opencmis.client.api.ItemIterable<org.apache.chemistry.opencmis.client.api.QueryResult> queryResult_<%=cid %> = cmisHelper_<%=cid %>.query(<%=QUERY %>);
+
+long count_<%=cid %> = 0;
+boolean finished_<%=cid %> = false;
+while (!finished_<%=cid %>) {
+    org.apache.chemistry.opencmis.client.api.ItemIterable<org.apache.chemistry.opencmis.client.api.QueryResult> currentPage_<%=cid %> = queryResult_<%=cid %>.skipTo(count_<%=cid %>).getPage();
+    for (org.apache.chemistry.opencmis.client.api.QueryResult item_<%=cid %> : currentPage_<%=cid %>) {
+
+
+
+
+

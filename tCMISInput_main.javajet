@@ -1,0 +1,76 @@
+<%@ jet
+	imports="
+		org.talend.core.model.process.INode
+		org.talend.core.model.process.ElementParameterParser
+		org.talend.core.model.metadata.IMetadataTable
+		org.talend.core.model.metadata.IMetadataColumn
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.core.model.metadata.types.JavaTypesManager
+		org.talend.core.model.metadata.types.JavaType
+		java.util.List
+    	java.util.Map
+	"
+%>
+<%
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+%>
+
+<%
+    List<IMetadataTable> metadatas = node.getMetadataList();
+    if ((metadatas != null) && (metadatas.size() > 0)) {
+        IMetadataTable metadata = metadatas.get(0);
+        if (metadata != null) {
+%>
+
+<%
+    List<? extends IConnection> conns = node.getOutgoingConnections();
+    if (conns != null && conns.size() > 0) {
+        IConnection conn = conns.get(0);
+        String connName = conn.getName();
+        if (conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
+            List<IMetadataColumn> columns = metadata.getListColumns();
+%>
+
+<%
+    for (IMetadataColumn column : columns) {
+        String columnName = column.getLabel();
+        String columnType = column.getTalendType();
+%>
+
+<%
+          if (columnType.equals("id_Object") && columnName.equals("content")) {
+%>
+			org.apache.chemistry.opencmis.client.api.Document openCMISDocument_<%=cid %> = cmisHelper_<%=cid %>.getDocument(item_<%=cid %>);
+			java.io.InputStream stream = null;
+			if (openCMISDocument_<%=cid %>.getContentStream() != null) {
+			    stream = openCMISDocument_<%=cid %>.getContentStream().getStream();
+		    }
+			<%=connName%>.<%=columnName%> = stream;
+<%
+          } else {
+%>
+			<%=connName%>.<%=columnName%> = item_<%=cid %>.getPropertyById("cmis:" + "<%=columnName%>").getFirstValue();
+<%
+		  }
+	}
+%>
+			nb_line_<%=cid%>++;
+			count_<%=cid %>++;
+			if (!currentPage_<%=cid %>.getHasMoreItems()) {
+			    finished_<%=cid %> = true;
+			}
+<%
+        }
+    }
+%>
+
+<%
+
+        }
+    }
+%>
+
