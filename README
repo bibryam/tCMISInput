@@ -1,0 +1,15 @@
+A Talend component that allows connecting to CMIS content repositories and retrieve content 
+
+TALEND CMIS PLUGIN
+====================
+tCMISInput is a Talend component to be used in Talend Open Studio or Talend Integration Suite in order to retrieve metadata and content from CMIS supporting content repositories
+		
+HOW TO USE IT
+====================
+After installing the component to Talend:
+- Fill the schema with column names mapping to the properties from the query result. For exaple - name, contentStreamName, contentStreamLength. If you want to retrieve the content itself, add a column named content and type Object.
+- Specify CMIS server URL			
+- RepositoryId  to connect to. If not specified it will connect to the first repository from the list of available repositories
+- User name
+- Password
+- Query: a CMIS query
